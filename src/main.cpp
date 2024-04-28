@@ -9,7 +9,7 @@
 #define OLED_RESET -1       // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
+#include <ESPping.h>
 const char *ssid = "Wokwi-GUEST";
 const char *password = "";
 
@@ -45,33 +45,51 @@ void setup()
   display.setCursor(0, 0);
   display.println("Connecting to WiFi...");
   display.display();
+  Serial.begin(115200);
+  Serial.println("Initializing WiFi...");
 
-  WiFi.begin(ssid, password);
+  WiFi.begin("Wokwi-GUEST", "");
 
+  // attente connexion
+  Serial.print("\nConnection");
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
+    Serial.print(".");
   }
-
-  Serial.print("CONNECTED to SSID: ");
-  Serial.println(ssid);
-
-  display.print("Connected to ");
-  display.println(ssid);
+  display.print("\nConnection OK, IP: ");
+  display.print(WiFi.localIP());
+  display.print(" Gateway: ");
+  display.println(WiFi.gatewayIP());
   display.display();
-  delay(5000);
+  // Serial.println("Setup done!");
+  // WiFi.begin(ssid, password);
+
+  /* while (WiFi.status() != WL_CONNECTED)
+   {
+     delay(500);
+   }
+
+   Serial.print("CONNECTED to SSID: ");
+   Serial.println(ssid);
+
+   display.print("Connected to ");
+   display.println(ssid);
+   display.display();
+   delay(5000);*/
 }
 
 void loop()
 {
-  if (WiFi.status() == WL_CONNECTED)
+
+  /*if (WiFi.status() == WL_CONNECTED)
   {
     Serial.println("Getting current data...");
 
-    
-    
+
+
     delay(1250);
-  }
+  }*/
 }
 
 void printCenter(const String buf, int x, int y)
