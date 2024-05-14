@@ -12,13 +12,6 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #include <ESPping.h>
 const char *ssid = "Wokwi-GUEST";
 const char *password = "";
-
-// Powered by CoinDesk - https://www.coindesk.com/price/bitcoin
-const String url = "http://api.coindesk.com/v1/bpi/currentprice/BTC.json";
-const String historyURL = "http://api.coindesk.com/v1/bpi/historical/close.json";
-const String cryptoCode = "BTC";
-
-// 'icons8-bitcoin-24', 24x24px
 const unsigned char bitcoinIcon[] PROGMEM = {
     0x00, 0x7e, 0x00, 0x03, 0xff, 0xc0, 0x07, 0x81, 0xe0, 0x0e, 0x00, 0x70, 0x18, 0x28, 0x18, 0x30,
     0x28, 0x0c, 0x70, 0xfc, 0x0e, 0x60, 0xfe, 0x06, 0x60, 0xc7, 0x06, 0xc0, 0xc3, 0x03, 0xc0, 0xc7,
@@ -27,6 +20,9 @@ const unsigned char bitcoinIcon[] PROGMEM = {
     0x81, 0xe0, 0x03, 0xff, 0xc0, 0x00, 0x7e, 0x00};
 
 String lastPrice;
+const int pin35 = 35;
+const int pin26 = 26;
+const int pin27=27;
 
 void setup()
 {
@@ -43,6 +39,7 @@ void setup()
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
+  pinMode(pin26, OUTPUT);
   display.println("Connecting to WiFi...");
   display.display();
   Serial.begin(115200);
@@ -50,10 +47,10 @@ void setup()
 
   WiFi.begin("Wokwi-GUEST", "");
 
-  // attente connexion
   Serial.print("\nConnection");
   while (WiFi.status() != WL_CONNECTED)
   {
+    digitalWrite(pin26, OUTPUT);
     delay(500);
     Serial.print(".");
   }
@@ -62,21 +59,10 @@ void setup()
   display.print(" Gateway: ");
   display.println(WiFi.gatewayIP());
   display.display();
-  // Serial.println("Setup done!");
-  // WiFi.begin(ssid, password);
-
-  /* while (WiFi.status() != WL_CONNECTED)
-   {
-     delay(500);
-   }
-
-   Serial.print("CONNECTED to SSID: ");
-   Serial.println(ssid);
-
-   display.print("Connected to ");
-   display.println(ssid);
-   display.display();
-   delay(5000);*/
+  bool ret = Ping.ping("portal.comnet.ec");
+  display.print("portal.comnet.ec : ");
+  display.print(ret ? "OK" : "KO");
+  display.display();
 }
 
 void loop()
